@@ -7,6 +7,10 @@ Genomics journal-club session, with 20 minutes for discussion. The deck uses
 three papers to ask what causal inference can—and cannot—deliver in
 observational and experimental biology.
 
+## Read the slides online
+
+<https://jiadongm.github.io/introCausal/>
+
 ## Materials
 
 - `slides.Rmd`: xaringan source deck.
