@@ -1,0 +1,13 @@
+# macOS and R session files
+.DS_Store
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj.user/
+
+# Intermediate R Markdown files
+*.knit.md
+*.utf8.md
+
+# Source papers are kept locally for preparation; do not publish them by default.
+refs/*.pdf

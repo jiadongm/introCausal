@@ -1,0 +1,470 @@
+---
+title: "How (not) to ask a causal question?"
+author: "Jiadong Mao"
+date: "1 September 2026"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    seal: false
+    css: ["default", "slides.css"]
+    nature:
+      ratio: "16:9"
+      highlightStyle: github
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+```
+
+class: title-slide
+
+# How (not) to ask a causal question?
+
+A very partial and courageous introduction to causal inference
+
+
+
+### Jiadong Mao
+
+### Melbourne Integrative Genomics Journal Club
+
+### 1 Sep 2026
+
+
+
+---
+
+# Do statins prevent cancer?
+
+<div class="statin-intro"><strong>Statins</strong>: widely prescribed to lower LDL ('bad') cholesterol and reduce cardiovascular risk.</div>
+
+<div class="statin-result">
+  <div class="statin-number">22%</div>
+  <div class="statin-label">hazard ratio (HR) between statin user vs non-user</div>
+  <div class="statin-detail"><strong>HR 0.22</strong> · More than 4 years of statin use versus never use</div>
+</div>
+
+<div class="hr-definition">
+  <div class="hr-formulas">
+    <div><i>h</i>(t) = lim<sub>Δt→0</sub> P(t ≤ T &lt; t+Δt | T ≥ t) / Δt</div>
+    <div>HR(t) = <i>h</i><sub>statin</sub>(t) / <i>h</i><sub>non-user</sub>(t)</div>
+  </div>
+  <div class="hr-caption"><i>h</i>(t) is the instantaneous cancer-diagnosis rate among people still cancer-free at time t.</div>
+</div>
+
+<div class="question-grid">
+  <div class="question-callout">Would you interpret this as a causal effect?</div>
+  <div class="question-callout">What do we mean by a causal effect?</div>
+</div>
+
+<div class="source-note">Dickerman et al., <i>Nature Medicine</i>, 2019.</div>
+
+
+---
+
+# The answer depends on design
+
+<div class="context-line">Same CALIBER cohort; same outcome variable: total cancer</div>
+
+<div class="comparison-grid">
+  <div class="comparison-card flawed">
+    <div class="card-kicker">Defined using future information</div>
+    <div class="card-title">More than 4 years of use<br>versus never use</div>
+    <div class="card-result">HR 0.22</div>
+    <div class="card-ci">95% CI 0.21–0.23</div>
+  </div>
+  <div class="comparison-card target">
+    <div class="card-kicker">Defined at time zero<sup>*</sup></div>
+    <div class="card-title">Initiate statins<br>versus do not initiate</div>
+    <div class="card-result">HR 1.02</div>
+    <div class="card-ci">95% CI 0.99–1.05</div>
+  </div>
+</div>
+
+<div class="takeaway-callout"> The immortal time bias: what do you mean by using statin? </div>
+
+<div class="term-note"><sup>*</sup> Time zero: the moment when eligibility is assessed, treatment is assigned or observed, and follow-up begins.</div>
+
+<div class="source-note">Dickerman et al., <i>Nature Medicine</i>, 2019.</div>
+
+???
+
+Dickerman and colleagues deliberately applied both approaches to the same
+observational database. One gives an implausibly large protective association;
+the other is essentially null and agrees with randomised trials. The rest of
+the talk asks what happened between these two numbers. Do not introduce
+immortal time yet.
+
+---
+
+# The canonical answer: randomise
+
+<div class="trial-question">Does initiating a statin reduce subsequent cancer incidence?</div>
+
+<div class="trial-flow">
+  <div class="trial-step"><span class="step-number">1</span><strong>Enrol eligible people</strong><br><span>at time zero</span></div>
+  <div class="trial-arrow">→</div>
+  <div class="trial-step"><span class="step-number">2</span><strong>Randomly assign</strong><br><span>initiate statin / do not initiate</span></div>
+  <div class="trial-arrow">→</div>
+  <div class="trial-step"><span class="step-number">3</span><strong>Follow outcomes</strong><br><span>using the same rules in both groups</span></div>
+</div>
+
+<div class="trial-takeaway">Randomisation makes the groups comparable <em>on average</em> at baseline.</div>
+
+
+
+
+---
+
+# When the trial is not available
+
+<div class="unavailable-grid">
+  <div class="unavailable-card"><strong>Unethical</strong><br><span>We cannot assign harmful exposures.</span></div>
+  <div class="unavailable-card"><strong>Infeasible</strong><br><span>The population, follow-up or intervention may be impractical to randomise.</span></div>
+</div>
+
+<div class="rwd-panel"><strong>Observational data</strong> record what happened without random assignment.<br><span>In pharma, observational data, e.g. electronic health records, claims and registries—are often called <strong>real-world data</strong>.</span></div>
+
+<div class="bridge-callout">Are scRNA-seq data observational? Mostly.</div>
+
+???
+
+Observational data are not a lesser kind of data; they answer different
+questions under different conditions. Real-world data is the data source.
+Real-world evidence is the clinical evidence produced by analysing those data.
+This talk concerns intervention effects from observational data, not causal
+discovery broadly.
+
+---
+
+# Comparing two possible worlds
+
+<div class="counterfactual-person">One eligible person at time zero</div>
+
+<div class="world-grid">
+  <div class="world-card treatment-world">
+    <div class="world-kicker">World 1</div>
+    <div class="world-action">They initiate a statin</div>
+    <div class="world-outcome">Their later cancer outcome</div>
+  </div>
+  <div class="world-contrast">versus</div>
+  <div class="world-card control-world">
+    <div class="world-kicker">World 2</div>
+    <div class="world-action">They do not initiate a statin</div>
+    <div class="world-outcome">Their later cancer outcome</div>
+  </div>
+</div>
+
+<div class="unobserved-callout">Foundamental problem of causal inf: we observe only one.</div>
+
+
+---
+
+# Four targets for a causal question
+
+<div class="targets-grid">
+  <div class="target-card"><div class="target-name">Target estimand</div><div>What intervention, comparator, outcome and follow-up?</div></div>
+  <div class="target-card"><div class="target-name">Target population</div><div>For whom is the conclusion intended?</div></div>
+  <div class="target-card"><div class="target-name">Target trial</div><div>What randomised experiment would answer the question?</div></div>
+  <div class="target-card"><div class="target-name">Target validity</div><div>Does this estimate answer the target estimand for the target population? Transportability from sample to population.</div></div>
+</div>
+
+<div class="targets-bottom-line">A causal analysis begins by 'what do you exactly mean by...', instead of 'what causal method we should use?'</div>
+
+<div class="source-note">Lu et al., <i>International Journal of Epidemiology</i>, 2025.</div>
+
+---
+
+class: statin-targets-slide
+
+# Apply the four targets to statins
+
+<div class="trial-question">Does initiating a statin reduce subsequent cancer incidence?</div>
+
+<div class="targets-grid">
+  <div class="target-card"><div class="target-name">Target estimand</div><div>Initiate now versus do not initiate; total cancer during follow-up.</div></div>
+  <div class="target-card"><div class="target-name">Target population</div><div>People eligible to initiate a statin at time zero.</div></div>
+  <div class="target-card"><div class="target-name">Target trial</div><div>Randomly assign initiation versus no initiation, then follow cancer outcomes.</div></div>
+  <div class="target-card"><div class="target-name">Target validity</div><div>Could the CALIBER analysis recover this effect for these people?</div></div>
+</div>
+
+<div class="targets-bottom-line">BEFORE fitting a model: agree on the question the model is meant to answer.</div>
+
+<div class="source-note">Lu et al., <i>International Journal of Epidemiology</i>, 2025; Dickerman et al., <i>Nature Medicine</i>, 2019.</div>
+
+???
+
+We now have a concrete question. Notice that this is not “the effect of four
+years of statin use”. It is the effect of initiating treatment at a defined
+moment, among people who were eligible at that moment. The next slide shows
+why this distinction changes the analysis before we choose any model.
+
+---
+
+# Immortal time bias
+
+<div class="future-setup">At time zero, nobody yet has more than four years of statin use.</div>
+
+<div class="future-timeline">
+  <div class="timeline-label">At time zero</div>
+  <div class="future-track">
+    <div class="timeline-node baseline-node">eligible</div>
+    <div class="survival-window">must remain alive, cancer-free<br>and observed</div>
+    <div class="timeline-node future-node">now classified as<br>“&gt;4 years’ user”</div>
+  </div>
+  <div class="timeline-label">Four years later</div>
+</div>
+
+<div class="future-exclusion">If cancer, death or loss to follow-up occurs before four years, the person can never enter the long-term-user group.</div>
+
+<div class="immortal-callout">'Protective effect' of assigning patients.</div>
+
+<div class="source-note">Dickerman et al., <i>Nature Medicine</i>, 2019.</div>
+
+---
+
+# A cleaner design is not a proof
+
+- Aligning time zero does not by itself address: Why people did or did not initiate a statin—and whether that also predicts cancer
+
+- This is confounding
+
+- Common causal-identification assumptions:
+
+  - **Consistency**: “Initiate a statin” names a sufficiently well-defined intervention; for a person who initiates, their observed outcome is their outcome under initiation.
+  - **Exchangeability**: After accounting for measured information, initiators and non-initiators do not differ in ways that also affect cancer (no unmeasured confounding).
+  - **Positivity**: For each relevant kind of person, both initiation and non-initiation are possible.
+
+---
+
+# Ways to violate these assumptions 
+
+<div class="failure-grid">
+  <div class="failure-card">
+    <div class="failure-name">Consistency</div>
+    <div class="failure-example">'Initiate a statin' can mean different drugs, doses, adherence patterns and clinical care.</div>
+    <div class="failure-result">The intervention may not be one well-defined thing.</div>
+  </div>
+  <div class="failure-card">
+    <div class="failure-name">Exchangeability</div>
+    <div class="failure-example">Health-seeking behaviour, diet or clinician judgement may affect both statin initiation and cancer risk.</div>
+    <div class="failure-result">The groups may differ in unrecorded ways.</div>
+  </div>
+  <div class="failure-card">
+    <div class="failure-name">Positivity</div>
+    <div class="failure-example">For some very high-risk people, nearly everyone initiates a statin.</div>
+    <div class="failure-result">There may be no credible non-initiation comparison.</div>
+  </div>
+</div>
+
+
+<div class="source-note">Lu et al., <i>International Journal of Epidemiology</i>, 2025.</div>
+
+---
+
+# Different outcome variable, same flaw
+
+<div class="benchmark-context">Randomised trials show that statins modestly <strong>increase</strong> type 2 diabetes risk.</div>
+
+<div class="benchmark-grid">
+  <div class="benchmark-panel aligned-benchmark">
+    <div class="benchmark-heading">Treatment defined at time zero</div>
+    <div class="benchmark-subheading">Initiate versus do not initiate</div>
+    <div class="benchmark-row"><span>Total cancer</span><strong>HR 1.02</strong><em>close to no effect</em></div>
+    <div class="benchmark-row"><span>Type 2 diabetes</span><strong>HR 1.11</strong><em>compatible with trials</em></div>
+  </div>
+  <div class="benchmark-panel flawed-benchmark">
+    <div class="benchmark-heading">Treatment defined using the future</div>
+    <div class="benchmark-subheading">More than 4 years’ use versus never use</div>
+    <div class="benchmark-row"><span>Total cancer</span><strong>HR 0.22</strong><em>strongly “protective”</em></div>
+    <div class="benchmark-row"><span>Type 2 diabetes</span><strong>HR 0.20</strong><em>implausibly “protective”</em></div>
+  </div>
+</div>
+
+
+<div class="source-note">Dickerman et al., <i>Nature Medicine</i>, 2019.</div>
+
+---
+
+class: bridge-question-slide
+
+<div class="bridge-question">But I cannot do causal inference on my data, is there then no hope of finding causality?</div>
+
+---
+
+# Evidence from three cultures
+
+<div class="culture-grid">
+  <div class="culture-card mechanism-culture">
+    <div class="culture-name">Biomedical / mechanistic</div>
+    <div class="culture-question">Could this intervention work?</div>
+    <div class="culture-strength">Mechanisms, models and perturbation experiments.</div>
+  </div>
+  <div class="culture-card clinical-culture">
+    <div class="culture-name">Clinical medicine</div>
+    <div class="culture-question">What happens to patients like mine?</div>
+    <div class="culture-strength">Experience with patients, colleagues and professional practice.</div>
+  </div>
+  <div class="culture-card numerical-culture">
+    <div class="culture-name">Numerical science</div>
+    <div class="culture-question">What are the average benefits and harms?</div>
+    <div class="culture-strength">Trials, meta-analysis, epidemiology and causal estimates.</div>
+  </div>
+</div>
+
+<div class="culture-bottom">A treatment decision needs a synthesis. (BTW this is why clinicians cannot yet be replaced by AI.)</div>
+
+<div class="source-note">Swales, <i>Journal of the Royal Society of Medicine</i>, 2000.</div>
+
+???
+
+Swales calls these three cultures experimental science, clinical medicine and
+numerical science. The key question is action: should I prescribe this
+treatment? Causal estimates belong in numerical science, but a clinical
+decision draws on all three cultures.
+
+---
+
+# From evidences to decision
+
+<div class="synthesis-question">Should I prescribe a statin to this patient?</div>
+
+<div class="synthesis-grid">
+  <div class="synthesis-card"><strong>Biomedical evidence</strong><br><span>Is there a credible mechanism or experimental model?</span></div>
+  <div class="synthesis-card"><strong>Clinical evidence</strong><br><span>What do experience and professional practice suggest?</span></div>
+  <div class="synthesis-card"><strong>Numerical evidence</strong><br><span>What do trials, meta-analysis and causal estimates imply?</span></div>
+</div>
+
+<div class="synthesis-decision">Clinical action also considers this patient’s goals, risks (side effects!), options and circumstances.</div>
+
+
+
+<div class="source-note">Swales, <i>Journal of the Royal Society of Medicine</i>, 2000.</div>
+
+---
+
+# Do not act: homeopathy
+
+<div class="case-question">Should clinicians recommend homeopathy?</div>
+
+<div class="case-grid">
+  <div class="case-card numerical-case">
+    <div class="case-label">Numerical evidence</div>
+    <div>A 1997 meta-analysis of controlled trials reported a statistically significant overall benefit.</div>
+  </div>
+  <div class="case-card mechanism-case">
+    <div class="case-label">Biomedical evidence</div>
+    <div>Extreme dilution left no credible pharmacological mechanism.</div>
+  </div>
+  <div class="case-card clinical-case">
+    <div class="case-label">Clinical evidence</div>
+    <div>For individual diseases, benefits were too small to recommend.</div>
+  </div>
+</div>
+
+<div class="case-decision no-decision"><strong>Decision:</strong> do not recommend it; ask for more research.</div>
+
+<div class="source-note">Swales, <i>Journal of the Royal Society of Medicine</i>, 2000.</div>
+
+???
+
+This is not a claim that any one culture should veto the others. It is an
+example of how a surprising numerical result is interpreted against the other
+evidence. Swales considers bias the likely explanation, but the action was not
+to recommend homeopathy.
+
+---
+
+# Do act: antiarrhythmic drugs
+
+<div class="case-question">Should clinicians suppress ventricular extra beats after myocardial infarction?</div>
+
+<div class="case-grid">
+  <div class="case-card mechanism-case">
+    <div class="case-label">Biomedical evidence</div>
+    <div>Suppressing an abnormal rhythm seemed a plausible way to prevent sudden death.</div>
+  </div>
+  <div class="case-card clinical-case">
+    <div class="case-label">Clinical evidence</div>
+    <div>Antiarrhythmic drugs entered widespread use.</div>
+  </div>
+  <div class="case-card numerical-case">
+    <div class="case-label">Numerical evidence</div>
+    <div>No randomised evidence of benefit; the eventual trial stopped early because treated patients had excess mortality.</div>
+  </div>
+</div>
+
+<div class="case-decision yes-decision"><strong>Initial decision:</strong> keep using these drugs. <span><strong>CAST:</strong> the drugs reduced extra beats but increased mortality, so this post-MI use was abandoned.</span></div>
+
+<div class="source-note">Swales, <i>Journal of the Royal Society of Medicine</i>, 2000.</div>
+
+
+---
+
+# A causal question in a cell experiment
+
+<div class="cell-question">Does inhibiting pathway X reduce entry into an inflammatory macrophage state after 48 hours?</div>
+
+<div class="cell-target-grid">
+  <div class="cell-target-card"><strong>Intervention</strong><br><span>Inhibit pathway X at time zero.</span></div>
+  <div class="cell-target-card"><strong>Comparator</strong><br><span>Matched vehicle control at time zero.</span></div>
+  <div class="cell-target-card"><strong>Outcome</strong><br><span>Macrophage state at 48 hours.</span></div>
+  <div class="cell-target-card"><strong>Target population</strong><br><span>Which donors, cultures and experimental conditions?</span></div>
+</div>
+
+<div class="cell-bottom">Legitimate causal question.</div>
+
+
+---
+
+# What might invalidate the comparison?
+
+<div class="case-grid">
+  <div class="case-card mechanism-case">
+    <div class="case-label">Experimental unit</div>
+    <div>Are cells independent replicates, or are cultures and donors the units that were actually assigned treatment?</div>
+  </div>
+  <div class="case-card clinical-case">
+    <div class="case-label">Selection after treatment</div>
+    <div>Does inhibition change survival, capture or QC, so that the cells retained at 48 hours are no longer comparable?</div>
+  </div>
+  <div class="case-card numerical-case">
+    <div class="case-label">Target validity</div>
+    <div>Would the result extend beyond these donors, this protocol and this in-vitro system?</div>
+  </div>
+</div>
+
+Biologsts are already doing causal inference, implicitly.
+
+
+
+---
+
+# Causal inference: useful, but limited
+
+<div class="closing-grid">
+  <div class="closing-card closing-can">
+    <div class="closing-heading">It can</div>
+    <div>Make a causal question explicit.</div>
+    <div>Make design choices and assumptions visible.</div>
+    <div>Give a conditional answer to a well-specified question.</div>
+  </div>
+  <div class="closing-card closing-cannot">
+    <div class="closing-heading">It cannot</div>
+    <div>Verify those assumptions from the same data.</div>
+    <div>Supply biological mechanism.</div>
+    <div>Settle causality without the wider evidence base.</div>
+  </div>
+</div>
+
+- A visible assumption $\neq$ a valid assumption.
+
+- You don't have to use causal inference to do causal inference.
+
+
+
+
+
+
+
