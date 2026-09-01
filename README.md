@@ -1,6 +1,6 @@
 # introCausal
 
-A very personal and courageous introduction to causal inference
+A bold introduction to causal inference
 
 This repository contains the materials for a 40-minute Melbourne Integrative
 Genomics journal-club session, with 20 minutes for discussion. The deck uses
